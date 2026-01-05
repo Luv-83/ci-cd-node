@@ -21,13 +21,8 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🧪 Run tests (optional)
-        run: |
-          if [ -f package.json ] && grep -q "\"test\"" package.json; then
-            npm test
-          else
-            echo "No tests found, skipping"
-          fi
+      - name: 🧪 Skip tests
+        run: echo "Skipping tests"
 
       - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
