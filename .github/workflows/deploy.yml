@@ -13,7 +13,7 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
+      - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -21,17 +21,39 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🧪 Skip tests
-        run: echo "Skipping tests"
-
       - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          debug: true
           script: |
+            echo "=== WHOAMI ==="
+            whoami
+
+            echo "=== HOME ==="
+            echo $HOME
+
+            echo "=== LIST HOME ==="
+            ls -la ~
+
+            echo "=== GO TO PROJECT ==="
             cd ~/ci-cd-node
+
+            echo "=== GIT STATUS ==="
+            git status
+
+            echo "=== PULL LATEST CODE ==="
             git pull origin main
+
+            echo "=== INSTALL PACKAGES ==="
             npm install
-            pm2 restart all || pm2 start index.js --name ci-cd-node
+
+            echo "=== PM2 STATUS ==="
+            pm2 list || true
+
+            echo "=== START / RESTART APP ==="
+            pm2 restart ci-cd-node || pm2 start index.js --name ci-cd-node
+
+            pm2 save
