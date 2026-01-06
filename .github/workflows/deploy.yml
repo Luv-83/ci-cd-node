@@ -50,10 +50,13 @@ jobs:
             echo "=== INSTALL PACKAGES ==="
             npm install
 
-            echo "=== PM2 STATUS ==="
+            echo "=== PM2 STATUS BEFORE ==="
             pm2 list || true
 
-            echo "=== START / RESTART APP ==="
-            pm2 restart ci-cd-node || pm2 start index.js --name ci-cd-node
+            echo "=== START OR RELOAD APP ==="
+            pm2 reload ecosystem.config.js --update-env || pm2 start ecosystem.config.js
 
             pm2 save
+
+            echo "=== PM2 STATUS AFTER ==="
+            pm2 list
